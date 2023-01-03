@@ -17,22 +17,27 @@ buy here, it is a fake. Indeed it is remarked 1117 series vith 1,04 V dropout.
 
 ### Advantages
 
-  No moving parts - no problems with bearings;
+  - No moving parts - no problems with bearings
 
-  More accurate (probably).
+  - More accurate (probably). You do need high precision ldo voltage regulator!
 
 ### Disadvantages
 
-  More expensive;
-
-  Sensor ends seem weak and can be broken easily. They need to be additionally protected;
-
-  Relatively long start;
-
-  High current consumption to heat the hotend.
+  - More expensive
+  - Sensor ends seem weak and can be broken easily. They need to be additionally protected
+  - Relatively long start;
+  - High current consumption to heat the hotend.
   
   ## Detals
   
   1. OLED screen stands should be 11 mm high and have M3 thread.
   2. The lengthof case asembling screws should be no less 20 mm. Initially it was supposed to use 2.5 mm screws but you can drill it up to 3 mm holes in bottom part and 2.5 mm in top part to use 3 mm screws.
   3. You can use a spring for button from a pen then you need to drill carefully up a hole in the button to 5 mm diam.
+  4. You need to use the short M3 screws with hidden head to attach screen stands to PCB and a sensor plate to a slider. Length should be no more then 5 mm.
+  5. PCB layout is designed in Sprint Layout software.
+  
+  ## TO-DO List
+  1. Design PCB layout for NCP3335A regulator in DFN package. It is cheaper then ADP3338.
+  2. Redraw PCB and scheme design in KiCAD.
+  3. Redesign the case in FreeCAD to use the assembling features
+  4. Try to make a new compact case for BL-5C Nokia Li-Ion battery without sharp corners.
