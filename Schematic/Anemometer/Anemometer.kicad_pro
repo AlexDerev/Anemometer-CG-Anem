@@ -380,8 +380,8 @@
       "idf": "",
       "netlist": "",
       "specctra_dsn": "",
-      "step": "",
-      "vrml": ""
+      "step": "Anemometer_pcb.step",
+      "vrml": "Anemometer.wrl"
     },
     "page_layout_descr_file": ""
   },
