@@ -12,6 +12,7 @@ uint32_t timer_cnt; // Таймер для измерений анемометр
 uint32_t timer_bat; // Таймер для измерения заряда батареи
 
 void setup() {
+  char buf[50];
   pinMode(ADC_pin, OUTPUT); // Инициализируем АЦП как получатель данных
   oled.init(); // Инициализируем OLED в коде
   oled.flipV(1); // Я перевернул экран для удобства
@@ -21,12 +22,16 @@ void setup() {
   oled.setScale(2); // Устанавливаем размер шрифта
   oled.setCursor(20, 3);
   oled.print("CG_Anem");
+  oled.setScale(1);
+  oled.setCursor(0, 1);
+  sprintf(buf, "ver: %.1f", cgAnem.getFirmwareVersion()); 
+  oled.print(buf);
   oled.update();
   delay(1500);
   cgAnem.init();
   oled.clear();
   oled.update();
-  cgAnem.set_duct_area(100); // Задаём площадь поперечного сечения для расчёта расхода. Меняется программно, измеряется в см^2
+  oled.setScale(2); // Устанавливаем размер шрифта
   for (int i = 10; i >= 0; i--) { // Функция таймера служит для предварительного нагрева анемометра перед использованием
     oled.setCursor(55, 3);
     oled.print(i);
@@ -48,22 +53,18 @@ void loop() {
     if (cgAnem.data_update()) {
       char buf1[50];
       char buf2[50];
-      char buf3[50];
       sprintf(buf1, "V: %.1f m/s ", cgAnem.getAirflowRate()); // Собираем строку с показаниями скорости потока
       sprintf(buf2, "T: %.1f C ", cgAnem.getTemperature()); // Собираем строку с показаниями температуры
-      sprintf(buf3, "Cons: %.1f m^3/h ", cgAnem.calculateAirConsumption()); // Собираем строку с показаниями расхода воздуха, исходя из заданного сечения. Расход воздуха измеряется в м^3/час
       oled.setCursor(0, 1);
       oled.print(buf1);
       oled.update();
       oled.setCursor(0, 3);
       oled.print(buf2);
       oled.update();
-      oled.setCursor(0, 5);
-      oled.print(buf3);
     }
     else {
       oled.setCursor(45, 3);
-      oled.print("ERROR");
+      oled.print("*");
     }
     oled.update();
   }
