@@ -12,32 +12,34 @@ uint32_t timer_cnt; // Таймер для измерений анемометр
 uint32_t timer_bat; // Таймер для измерения заряда батареи
 
 void setup() {
-  char buf[50];
+  char buf[10];
+  int8_t timeToWait = 10;
+  int8_t warmRectWidth = 60;
   pinMode(ADC_pin, OUTPUT); // Инициализируем АЦП как получатель данных
   oled.init(); // Инициализируем OLED в коде
   oled.flipV(1); // Я перевернул экран для удобства
   oled.flipH(1); // Для нормального отображения после переворота нужно инвертировать текст по горизонтали
   oled.clear();
-  oled.update();
-  oled.setScale(2); // Устанавливаем размер шрифта
-  oled.setCursor(20, 3);
-  oled.print("CG_Anem");
-  oled.setScale(1);
-  oled.setCursor(0, 1);
-  sprintf(buf, "ver: %.1f", cgAnem.getFirmwareVersion()); 
+
+  oled.setCursor(0, 0);
+  sprintf(buf, "HW: %.1f", cgAnem.getFirmwareVersion()); 
   oled.print(buf);
-  oled.update();
-  delay(1500);
-  cgAnem.init();
-  oled.clear();
-  oled.update();
+
+  oled.setCursor(0, 5);
+  oled.print("Warming");
+
   oled.setScale(2); // Устанавливаем размер шрифта
-  for (int i = 10; i >= 0; i--) { // Функция таймера служит для предварительного нагрева анемометра перед использованием
-    oled.setCursor(55, 3);
-    oled.print(i);
+  oled.setCursor(20, 2);
+  oled.print("CG_Anem");
+
+  oled.rect(45, 40, 45+warmRectWidth, 48, OLED_STROKE);
+  oled.update();
+
+  cgAnem.init();
+  for (int i = 0; i <= timeToWait; i++) { // Функция таймера служит для предварительного нагрева анемометра перед использованием
+    oled.rect(45, 40, 45+warmRectWidth/timeToWait*i, 48, OLED_FILL);
     oled.update();
     delay(1000);
-    oled.clear();
     oled.update();
   }
   delay(1000);
@@ -76,23 +78,12 @@ void loop() {
     oled.rect(125, 5, 127, 8, OLED_FILL);
     if (ADC >= 970) {
       oled.rect(104, 3, 124, 10, OLED_FILL);
-      oled.setCursor(6, 1);
-      oled.setCursor(104, 2);
-      oled.print("100%");
     }
     if (ADC < 970 && ADC >= 870) {
       oled.rect(106, 3, 119, 10, OLED_FILL);
-      oled.setCursor(104, 2);
-      oled.print("75%");
     }
     if (ADC < 870 && ADC >= 770) {
       oled.rect(106, 3, 114, 10, OLED_FILL);
-      oled.setCursor(104, 2);
-      oled.print("50%");
-    }
-    if (ADC < 770) {
-      oled.setCursor(104, 2);
-      oled.print("LOW");
     }
     oled.update();
   } 
