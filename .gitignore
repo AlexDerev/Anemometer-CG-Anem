@@ -5,3 +5,4 @@
 Schematic/Anemometer/fp-info-cache
 Schematic/Anemometer/Anemometer.round-tracks-config
 Firmware/AnemCode/src/AnemCode.code-workspace
+*.json
