@@ -2,14 +2,23 @@
 #include "cgAnem.h"
 #include <Wire.h>
 #include <GyverOLED.h>
+
+#include "FlowPlot.h"
+#include "FlowPlot.cpp"
+
 #define ADC_pin A0 // задаём значение пина АЦП
+#define PLOT_COUNTS 60 //количество отсчетов на графике
 
 GyverOLED<SSH1106_128x64> oled; // Инициализируем OLED-экран
 CG_Anem cgAnem(ANEM_I2C_ADDR); // Инициализируем CG_Anem
+FlowPlot<PLOT_COUNTS> flowPlot;
 
 uint16_t ADC; // Переменная для значений АЦП
 uint32_t timer_cnt; // Таймер для измерений анемометра
 uint32_t timer_bat; // Таймер для измерения заряда батареи
+const uint8_t *p;
+uint8_t height = 40;
+float flow;
 
 void setup() {
   char buf[10];
@@ -46,29 +55,29 @@ void setup() {
   oled.clear();
   oled.update();
   oled.setScale(1);
+  flowPlot.init(height);
+  p = flowPlot.getPoints();
 }
 
 void loop() {
+  char buf[50];
   if (millis() - timer_cnt > 1000) { // Снимаем показания с анемометра и выводим их на экран
     timer_cnt = millis();
     // Проверяем, обновляются ли данные с анемометра. Если да - выводим их, если нет - предупреждаем об ошибке
     if (cgAnem.data_update()) {
-      char buf1[50];
-      char buf2[50];
-      sprintf(buf1, "V: %.1f m/s ", cgAnem.getAirflowRate()); // Собираем строку с показаниями скорости потока
-      sprintf(buf2, "T: %.1f C ", cgAnem.getTemperature()); // Собираем строку с показаниями температуры
+      flow = cgAnem.getAirflowRate();
+      flowPlot.pushValue(flow);
+      sprintf(buf, "V: %.1f m/s ", flow); // Собираем строку с показаниями скорости потока
       oled.setCursor(0, 1);
-      oled.print(buf1);
-      oled.update();
+      oled.print(buf);
+      sprintf(buf, "T: %.1f C ", cgAnem.getTemperature()); // Собираем строку с показаниями температуры
       oled.setCursor(0, 3);
-      oled.print(buf2);
-      oled.update();
+      oled.print(buf);
     }
     else {
       oled.setCursor(45, 3);
       oled.print("*");
     }
-    oled.update();
   }
 
   if (millis() - timer_bat > 10000) { //
@@ -85,6 +94,15 @@ void loop() {
     if (ADC < 870 && ADC >= 770) {
       oled.rect(106, 3, 114, 10, OLED_FILL);
     }
-    oled.update();
-  } 
+  }
+
+  oled.rect(60, 10, 60 + PLOT_COUNTS, 10 + height, OLED_CLEAR);
+  oled.rect(60, 10, 60 + PLOT_COUNTS, 10 + height, OLED_STROKE);
+  for (uint8_t i = 0; i < PLOT_COUNTS; i++) {
+    oled.dot(60 + i, 10 + p[i], OLED_FILL);
+  }
+  sprintf(buf, "M: %.1f m/s ", flowPlot.getMeanFlow()); // Собираем строку с показаниями температуры
+  oled.setCursor(0, 5);
+  oled.print(buf);
+  oled.update();
 }
