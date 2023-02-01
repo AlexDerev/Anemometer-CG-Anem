@@ -16,6 +16,7 @@ bool FlowPlot<_counts>::init(uint8_t _height, float _v_min, float _v_max, boolea
     return setRanges(_v_min, _v_max);
 }
 
+
 template <uint8_t _counts>
 uint8_t FlowPlot<_counts>::get_point_height(uint16_t _flow) {
     uint8_t flow_point_height;
@@ -45,7 +46,6 @@ void FlowPlot<_counts>::pushValue(float _flow) {
         for (uint8_t i=0; i < counter_; i++) {
             points_[i] = get_point_height(values_[i]);
         }
-
     }
     
     if (counter_ < _counts-1) {
