@@ -66,7 +66,9 @@ void loop() {
   if (millis() - timer_cnt > 1000) { // Снимаем показания с анемометра и выводим их на экран
     timer_cnt = millis();
     // Проверяем, обновляются ли данные с анемометра. Если да - выводим их, если нет - предупреждаем об ошибке
-    if (cgAnem.data_update()) {
+    //
+    // if (cgAnem.data_update()) {
+    cgAnem.data_update();
       flow = cgAnem.getAirflowRate();
       flowPlot.pushValue(flow);
       sprintf(buf, "T:%.1fC ", cgAnem.getTemperature()); // Собираем строку с показаниями температуры
@@ -99,11 +101,13 @@ void loop() {
       oled.setCursor(0, 3);
       oled.setScale(2);
       oled.print(buf);
+    /*
     }
     else {
       oled.setCursor(35, 0);
       oled.print("*");
     }
+    */
   }
 
   if (millis() - timer_bat > 10000) { //
